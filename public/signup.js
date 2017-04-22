@@ -9,7 +9,7 @@ $(document).ready(function(){
         url: '/signup',
         data: user,
         success:
-          alert('Your signup was successful, You can now register');
+          alert('Your signup was successful, You can now register')
         
       });
 
