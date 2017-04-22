@@ -1,10 +1,12 @@
+function del() {
+  var myList = document.getElementById('del');
+  myList.innerHTML = '';
+}
+
 $(document).ready(function(){
 
   $('form').on('submit', function(){
-
-      var todo = $( "form" ).serialize();
-
-
+    var todo = $( "form" ).serialize();
       $.ajax({
         type: 'POST',
         url: '/adminCopy',
@@ -14,34 +16,34 @@ $(document).ready(function(){
           location.reload();
         }
       });
-
       return false;
-
   });
 
-  $('span').on('click', function(){
-      var item = $(this).closest('.li').text().replace(/ /g, "-");
-      //$(this).closest('.li').remove();
-      $.ajax({
-        type: 'DELETE',
-        url: '/adminCopy/' + item,
-        success: function(data){
-          //do something with the data via front-end framework
-          location.reload();
-        }
-      });
-  });
+  // $('li#events').on('click', function(){
+  //       var item = $(this).text().replace(/ /g, "-");
+  //       $.ajax({
+  //         type: 'DELETE',
+  //         url: '/adminCopy/' + item,
+  //         success: function(data){
+  //           //do something with the data via front-end framework
+  //           location.reload();
+  //         }
+  //       });
+  //   });
 
-  $('li').on('click', function(){
-      var item = $(this).text();
-      $.ajax({
-        type: 'GET',
-        url: '/adminCopy',
-        success: function(data){
-          //do something with the data via front-end framework
-          location.reload();
-        }
-      });
-  });
+  $('li.todoo').on('click', function(){
+    var item = $(this).text();
+    //console.log(item);
+    $.ajax({
+      type: 'GET',
+      url: '/adminCopy/'+item,
+      data: item,
+      success: function(data){
+        for(var i = 0; i<data.length; i++) {
+        $('.eventUsers').text(data[i].username)
+      }
+      }
+    });
+});
 
 });

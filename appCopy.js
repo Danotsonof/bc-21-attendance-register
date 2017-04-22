@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
 var app = express();
 var port = 3000;
 
-var eventsObjects = {};
-
 mongoose.connect('mongodb://127.0.0.1:27017/todo');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -57,79 +55,11 @@ var User = mongoose.model('myuser', userSchema)
 
 var Options = mongoose.model('event', eventSchema)
 
-app.get('/adminCopy', function(req, res){
-  //get data from mongodb and pass it to view
-
-  Todo.find({}, function(err, data){
-  //   if  (err) throw err
-  //   //res.render('adminCopy', {todos: data})
-  // //})
-    User.find({}, function(err, foundData) {
-
-      if(err) {
-        console.log(err);
-        res.status(500).send();
-      } else {
-        // if(foundData.length = 0) {
-        //   var responseObject = undefined;
-        //   res.status(404).send(responseObject);
-        // }
-        // else {
-        var responseObject = foundData;
-        Options.find({option: req.params.item},function(err, dataEvent){
-          //console.log(req.params.item);
-          if(err) throw err
-          res.render('adminCopy', {events: dataEvent, users: responseObject, todos: data})
-        })
-
-           //res.render('adminCopy', {users: responseObject, todos: data})
-        // }
-      }
-      //res.render('adminCopy', {users: responseObject, todos: data})
-    })
-  //res.render('adminCopy', {users: responseObject})
-})
-})
-
-app.get('/adminCopy/users', function(req, res){
-  //get data from mongodb and pass it to view
-  User.find({}, function(err, foundData) {
-    if(err) {
-      console.log(err);
-      res.status(500).send();
-    } else {
-      if(foundData.length = 0) {
-        var responseObject = undefined;
-        res.status(404).send(responseObject);
-      }
-      else {
-        var responseObject = foundData;
-        //res.send(responseObject);
-      }
-    }
-    res.render('adminCopy', {users: responseObject})
-  })
-
-})
-
 app.get('/homeCopy', function(req, res){
   //get data from mongodb and pass it to view
   Todo.find({}, function(err, data){
     if  (err) throw err
     res.render('homeCopy', {todos: data})
-  })
-})
-
-app.get('/signupCopy', function(req, res){
-  res.render('signupCopy')
-})
-
-//POST is used to insert/update remote data.
-app.post('/adminCopy', urlencodedParser, function(req, res){
-  //get data from the view and add it to mongodb
-  var newTodo = Todo(req.body).save(function(err, data){
-    if (err) throw err
-    res.send()
   })
 })
 
@@ -170,6 +100,10 @@ app.post('/homeCopy', urlencodedParser, function(req, res){
     })
   })
 
+app.get('/signupCopy', function(req, res){
+  res.render('signupCopy')
+})
+
 app.post('/signupCopy', urlencodedParser, function(req, res){
   var email = req.body.email;
   var password = req.body.password;
@@ -188,12 +122,60 @@ app.post('/signupCopy', urlencodedParser, function(req, res){
   })
 })
 
+app.get('/adminCopy', function(req, res){
+  //get data from mongodb and pass it to view
+
+  Todo.find({}, function(err, data){
+  //   if  (err) throw err
+  //   //res.render('adminCopy', {todos: data})
+  // //})
+    User.find({}, function(err, foundData) {
+
+      if(err) {
+        console.log(err);
+        res.status(500).send();
+      } else {
+        // if(foundData.length = 0) {
+        //   var responseObject = undefined;
+        //   res.status(404).send(responseObject);
+        // }
+        // else {
+        var responseObject = foundData;
+        res.render('adminCopy', {users: responseObject, todos: data})
+        // }
+      }
+      //res.render('adminCopy', {users: responseObject, todos: data})
+    })
+  //res.render('adminCopy', {users: responseObject})
+  })
+})
+//POST is used to insert/update remote data.
+app.post('/adminCopy', urlencodedParser, function(req, res){
+  //get data from the view and add it to mongodb
+  console.log(req.params.item);
+  var newTodo = Todo(req.body).save(function(err, data){
+    if (err) throw err
+    res.send()
+  })
+})
+
 app.delete('/adminCopy/:item', function(req, res){
   //delete the requested item from mongodb
   Todo.find({item: req.params.item.replace(/\-/g, " ")}).remove(function(err, data){
     if(err) throw err
     res.json(data)
   })
+})
+
+app.get('/adminCopy/:item', function(req, res){
+
+  //console.log(req.params.item);
+  Options.find({option: req.params.item},function(err, dataEvent){
+          //console.log(dataEvent);
+          if(err) throw err
+          //res.render('adminCopy', {events: dataEvent})
+          res.json(dataEvent);
+        })
 })
 
 app.listen(port, function(){
