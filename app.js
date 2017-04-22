@@ -5,18 +5,28 @@ const mongoose = require('mongoose');
 var app = express();
 var port = 3000;
 
-mongoose.connect('mongodb://127.0.0.1:27017/attendance');
+mongoose.connect('mongodb://register:register@ds155418.mlab.com:55418/attendance');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
 app.set('view engine', 'ejs')
-//app.use(bodyParser.json());
 app.use(express.static('./public'))
-//app.use('/public', express.static('public'))
+
+var todoSchema = new mongoose.Schema({
+  item: String
+})
 
 var userSchema = new mongoose.Schema({
   email: {type: String, unique: true},
   password: {type: String},
-  username: String
+  firstname: String,
+  lastname: String
+});
+
+var eventSchema = new mongoose.Schema({
+  option: String,
+  firstname: String,
+  lastname: String
 });
 
 userSchema.pre('save', function (next) {
@@ -40,16 +50,75 @@ userSchema.methods.comparePassword = function (candidatePassword, callback){
   })
 }
 
+var Todo = mongoose.model('Todo', todoSchema)
+
 var User = mongoose.model('myuser', userSchema)
 
+var Options = mongoose.model('event', eventSchema)
+
 app.get('/', function(req, res){
-  res.render('home')
+  //get data from mongodb and pass it to view
+  Todo.find({}, function(err, data){
+    if  (err) throw err
+    res.render('home', {todos: data})
+  })
 })
 
-app.delete('/delete/:id', function(req,res) {
-  var id = req.params.id;
-  User.findOneAndRemove({_id:id}, function(err){
-    if (err) {
+app.post('/', urlencodedParser, function(req, res){
+    //get data from the view and add it to mongodb
+    var firstname = req.body.firstname.toLowerCase();
+    var lastname = req.body.lastname.toLowerCase();
+    var password = req.body.password;
+    var option = req.body.single;
+
+    var newUserEvent = new Options();
+    if (firstname === 'admin' && lastname === 'admin' && password === 'admin') {
+      res.json(req.body);
+    }
+
+    User.findOne({lastname: lastname, firstname: firstname}, function(err, user) {
+      if(err) {
+        console.log(err);
+        return res.status(500).send();
+      }
+      if(!user) {
+        return res.status(401).send();
+      }
+      user.comparePassword(password, function (err, isMatch){
+        if (isMatch && isMatch == true) {
+          newUserEvent.option = option;
+          newUserEvent.firstname = firstname;
+          newUserEvent.lastname = lastname;
+          newUserEvent.save(function(err, savedUser) {
+            if(err) {
+              console.log(err);
+              return res.status(500).send();
+            }
+            return res.status(200).send();
+          })
+
+          //return res.status(200).send();
+        } else {
+          return res.status(401).send();
+        }
+      })
+
+    })
+  })
+
+
+app.post('/signup', urlencodedParser, function(req, res){
+  var email = req.body.email;
+  var password = req.body.password;
+  var lastname = req.body.lastname.toLowerCase();
+  var firstname = req.body.firstname.toLowerCase();
+  var newUser = new User();
+  newUser.email = email;
+  newUser.password = password;
+  newUser.lastname = lastname;
+  newUser.firstname = firstname;
+  newUser.save(function(err, savedUser) {
+    if(err) {
       console.log(err);
       return res.status(500).send();
     }
@@ -58,75 +127,46 @@ app.delete('/delete/:id', function(req,res) {
 })
 
 app.get('/admin', function(req, res){
-  User.find({}, function(err, foundData) {
-    if(err) {
-      console.log(err);
-      res.status(500).send();
-    } else {
-      if(foundData.length = 0) {
-        var responseObject = undefined;
-        res.status(404).send(responseObject);
+  //get data from mongodb and pass it to view
+  Todo.find({}, function(err, data){
+    User.find({}, function(err, foundData) {
+      if(err) {
+        res.status(500).send();
       } else {
         var responseObject = foundData;
-        res.send(responseObject);
-      }
-
-    }
-  })
-  res.render('admin')
-})
-
-app.post('/admin', function(req, res){
-  res.render('admin')
-})
-
-// app.post('/home', function(req, res){
-//   res.render('home')
-// })
-
-app.get('/signup', function(req, res){
-  res.render('signup')
-})
-
-app.post('/login', urlencodedParser, function(req, res){
-  var username = req.body.username;
-  var password = req.body.password;
-  console.log(username);
-  User.findOne({username: username}, function(err, user) {
-    if(err) {
-      console.log(err);
-      return res.status(500).send();
-    }
-    if(!user) {
-      return res.status(200).send();
-    }
-    user.comparePassword(password, function (err, isMatch){
-      if (isMatch && isMatch == true) {
-        return res.status(200).send();
-      } else {
-        return res.status(401).send();
+        res.render('admin', {users: responseObject, todos: data})
       }
     })
-
   })
 })
 
-app.post('/signup', urlencodedParser, function(req, res){
-  var email = req.body.email;
-  var password = req.body.password;
-  var username = req.body.username;
-  console.log(email);
-  var newUser = new User();
-  newUser.email = email;
-  newUser.password = password;
-  newUser.username = username;
-  newUser.save(function(err, savedUser) {
-    if(err) {
-      console.log(err);
-      return res.status(500).send();
-    }
-    return res.status(200).send();
+app.post('/admin', urlencodedParser, function(req, res){
+  //get data from the view and add it to mongodb
+  console.log(req.params.item);
+  var newTodo = Todo(req.body).save(function(err, data){
+    if (err) throw err
+    res.send()
   })
+})
+
+app.delete('/admin/:item', function(req, res){
+  //delete the requested item from mongodb
+  Todo.find({item: req.params.item}).remove(function(err, data){
+    if(err) throw err
+    res.json(data)
+  })
+})
+
+app.get('/admin/:item', function(req, res){
+  var show = req.params.item;
+  console.log(req.params.item);
+  Options.find({option: show},function(err, dataEvent){
+          if(err) {
+            throw err
+          }
+          console.log(dataEvent);
+          res.json(dataEvent);
+        })
 })
 
 app.listen(port, function(){

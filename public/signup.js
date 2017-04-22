@@ -6,12 +6,11 @@ $(document).ready(function(){
 
       $.ajax({
         type: 'POST',
-        url: '/signupCopy',
+        url: '/signup',
         data: user,
-        success: function(data){
-          //do something with the data via front-end framework
-          location.reload();
-        }
+        success:
+          alert('Your signup was successful, You can now register');
+        
       });
 
       return false;

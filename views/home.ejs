@@ -1,33 +1,162 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Attendance Register</title>
-    <link rel="stylesheet" href="/bootstrap.min.css">
-    <link rel="stylesheet" href="/style.css">
-    <script type="text/javascript" src="home.js"></script>
-  </head>
-  <body>
+<html lang="en">
 
-    <div class="">
-      <form class="" action="/login" method="post">
-        <label for="username">Login</label>
-        <input type="text" name="username" value="" placeholder="Username">
-        <br><br>
-        <label for="password">Password</label>
-        <input type="password" name="password" value="" placeholder="Password">
-        <br><br>
-        <div class="dropdown">
-          <button class="dropbtn">Select Event</button>
-          <div id="event-list" class="dropdown-content">
+    <head>
 
-          </div>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Attendance Register</title>
+
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/form-elements.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+
+        <link rel="shortcut icon" href="assets/ico/favicon.png">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    </head>
+
+    <body>
+
+        <!-- Top content -->
+        <div class="top-content">
+
+            <div class="inner-bg">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                            <h1><strong>Attendance Register</strong></h1>
+                            <div class="description">
+                            	<p>
+	                            	Let your presence be known<br>
+                                Enjoy your event.
+                            	</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-5">
+
+                        	<div class="form-box">
+	                        	<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Register Here</h3>
+	                            		<p>Enter firstname, lastname, password and
+                                    select an event to register:</p>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-lock"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="" method="post" class="login-form">
+                              <div class="form-group">
+				                    		<label class="sr-only" for="first-name">First name</label>
+				                        	<input type="text" name="firstname" placeholder="First name..." class="form-first-name form-control" id="form-first-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="last-name">Last name</label>
+				                        	<input type="text" name="lastname" placeholder="Last name..." class="form-last-name form-control" id="form-last-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="password">Password</label>
+				                        	<input type="password" name="password" placeholder="Password..." class="form-password form-control" id="form-password">
+				                        </div>
+                                <div class="social-login">
+                                  <h3>Select an event</h3>
+
+                                  <select name="single" class="form-control">
+                                    <%for(var i = 0; i<todos.length; i++) {%>
+                                      <option><%= todos[i].item%></option>
+                                      <%}%>
+                                  </select>
+
+                                </div>
+                                <br><br>
+				                        <button type="submit" class="btn">Register!</button>
+				                    </form>
+			                    </div>
+		                    </div>
+
+
+                        </div>
+
+                        <div class="col-sm-1 middle-border"></div>
+                        <div class="col-sm-1"></div>
+
+                        <div class="col-sm-5">
+
+                        	<div class="form-box">
+                        		<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Sign up now</h3>
+	                            		<p>Have not signup before? Fill in the form below:</p>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-pencil"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="" method="post" class="registration-form">
+				                    	<div class="form-group">
+				                    		<label class="sr-only" for="first-name">First name</label>
+				                        	<input type="text" name="firstname" placeholder="First name..." class="form-first-name form-control" id="form-first-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="last-name">Last name</label>
+				                        	<input type="text" name="lastname" placeholder="Last name..." class="form-last-name form-control" id="form-last-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="email">Email</label>
+				                        	<input type="text" name="email" placeholder="Email..." class="form-email form-control" id="form-email">
+				                        </div>
+  				                        <div class="form-group">
+  				                        	<label class="sr-only" for="password">Password</label>
+  				                        	<input type="password" name="password" placeholder="Password..." class="form-password form-control" id="form-password">
+  				                        </div>
+				                        <button type="submit" class="btn">Sign me up!</button>
+				                    </form>
+			                    </div>
+                        	</div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-        <br><br>
-        <button class="btn btn-warning" type="submit">Login</button>
-        <br><br>
-        <a href="/signup">Not registered yet?, Sign up</a>
-      </form>
 
-  </body>
+        <!-- Footer -->
+        <footer>
+        	<div class="container">
+        		<div class="row">
+
+        			<div class="col-sm-8 col-sm-offset-2">
+        				<div class="footer-border"></div>
+        				<p>Have a nice day</p>
+        			</div>
+
+        		</div>
+        	</div>
+        </footer>
+
+        <!-- Javascript -->
+        <script src="assets/js/jquery-1.11.1.min.js"></script>
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/js/jquery.backstretch.min.js"></script>
+        <script src="assets/js/scripts.js"></script>
+        <script src="/home.js" type="text/javascript"></script>
+        <script src="/signup.js" type="text/javascript"></script>
+
+    </body>
+
 </html>

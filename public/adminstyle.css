@@ -1,10 +1,21 @@
 
-  .grey-box
-  {
-    background-color: grey;
-    height: 200px;
-    margin-bottom: 10px;
-    font-size: 2em;
-    text-align: center;
-    padding: 80px;
+  body{
+    background-image: url(assets/img/backgrounds/1.jpg);
   }
+  ul {
+  background: #3399ff;
+  padding: 20px;
+  display:table; margin:0 auto;
+  color: black;
+  list-style-type:none
+}
+ul li {
+  background: #cce5ff;
+  margin: 5px;
+}
+h1 {
+font-weight: bold
+}
+.eventUsers {
+color: black;
+}
