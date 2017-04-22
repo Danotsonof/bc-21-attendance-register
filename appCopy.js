@@ -20,12 +20,14 @@ var todoSchema = new mongoose.Schema({
 var userSchema = new mongoose.Schema({
   email: {type: String, unique: true},
   password: {type: String},
-  username: String
+  firstname: String,
+  lastname: String
 });
 
 var eventSchema = new mongoose.Schema({
-  username: String,
-  option: String
+  option: String,
+  firstname: String,
+  lastname: String
 });
 
 userSchema.pre('save', function (next) {
@@ -55,7 +57,7 @@ var User = mongoose.model('myuser', userSchema)
 
 var Options = mongoose.model('event', eventSchema)
 
-app.get('/homeCopy', function(req, res){
+app.get('/', function(req, res){
   //get data from mongodb and pass it to view
   Todo.find({}, function(err, data){
     if  (err) throw err
@@ -63,15 +65,32 @@ app.get('/homeCopy', function(req, res){
   })
 })
 
-app.post('/homeCopy', urlencodedParser, function(req, res){
+app.post('/', urlencodedParser, function(req, res){
     //get data from the view and add it to mongodb
-    var username = req.body.username;
+    var firstname = req.body.firstname.toLowerCase();
+    var lastname = req.body.lastname.toLowerCase();
     var password = req.body.password;
     var option = req.body.single;
 
     var newUserEvent = new Options();
+    if (firstname === 'admin' && lastname === 'admin' && password === 'admin') {
+      console.log(password);
+      
+res.end();
+      //res.json({})
+      // Todo.find({}, function(err, data){
+      //   User.find({}, function(err, foundData) {
+      //     if(err) {
+      //       res.status(500).send();
+      //     } else {
+      //       var responseObject = foundData;
+      //       res.render('adminCopy', {users: responseObject, todos: data})
+      //     }
+      //   })
+      // })
+    }
 
-    User.findOne({username: username}, function(err, user) {
+    User.findOne({lastname: lastname, firstname: firstname}, function(err, user) {
       if(err) {
         console.log(err);
         return res.status(500).send();
@@ -82,7 +101,8 @@ app.post('/homeCopy', urlencodedParser, function(req, res){
       user.comparePassword(password, function (err, isMatch){
         if (isMatch && isMatch == true) {
           newUserEvent.option = option;
-          newUserEvent.username = username;
+          newUserEvent.firstname = firstname;
+          newUserEvent.lastname = lastname;
           newUserEvent.save(function(err, savedUser) {
             if(err) {
               console.log(err);
@@ -107,12 +127,14 @@ app.get('/signupCopy', function(req, res){
 app.post('/signupCopy', urlencodedParser, function(req, res){
   var email = req.body.email;
   var password = req.body.password;
-  var username = req.body.username;
-  console.log(email);
+  var lastname = req.body.lastname.toLowerCase();
+  var firstname = req.body.firstname.toLowerCase();
+  //console.log(username);
   var newUser = new User();
   newUser.email = email;
   newUser.password = password;
-  newUser.username = username;
+  newUser.lastname = lastname;
+  newUser.firstname = firstname;
   newUser.save(function(err, savedUser) {
     if(err) {
       console.log(err);
@@ -124,29 +146,15 @@ app.post('/signupCopy', urlencodedParser, function(req, res){
 
 app.get('/adminCopy', function(req, res){
   //get data from mongodb and pass it to view
-
   Todo.find({}, function(err, data){
-  //   if  (err) throw err
-  //   //res.render('adminCopy', {todos: data})
-  // //})
     User.find({}, function(err, foundData) {
-
       if(err) {
-        console.log(err);
         res.status(500).send();
       } else {
-        // if(foundData.length = 0) {
-        //   var responseObject = undefined;
-        //   res.status(404).send(responseObject);
-        // }
-        // else {
         var responseObject = foundData;
         res.render('adminCopy', {users: responseObject, todos: data})
-        // }
       }
-      //res.render('adminCopy', {users: responseObject, todos: data})
     })
-  //res.render('adminCopy', {users: responseObject})
   })
 })
 //POST is used to insert/update remote data.
@@ -161,7 +169,7 @@ app.post('/adminCopy', urlencodedParser, function(req, res){
 
 app.delete('/adminCopy/:item', function(req, res){
   //delete the requested item from mongodb
-  Todo.find({item: req.params.item.replace(/\-/g, " ")}).remove(function(err, data){
+  Todo.find({item: req.params.item}).remove(function(err, data){
     if(err) throw err
     res.json(data)
   })

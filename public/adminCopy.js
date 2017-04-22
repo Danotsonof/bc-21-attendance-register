@@ -20,7 +20,7 @@ $(document).ready(function(){
   });
 
   // $('li#events').on('click', function(){
-  //       var item = $(this).text().replace(/ /g, "-");
+  //       var item = $(this).text();
   //       $.ajax({
   //         type: 'DELETE',
   //         url: '/adminCopy/' + item,
@@ -39,11 +39,18 @@ $(document).ready(function(){
       url: '/adminCopy/'+item,
       data: item,
       success: function(data){
+        console.log(item);
+        if (data.length === 0){
+          $('.log').text('Users registered for '+ item)
+          $('.eventUsers').text('none')
+        } else {
+        $('.log').text('Users registered for '+ data[0].option)
         for(var i = 0; i<data.length; i++) {
-        $('.eventUsers').text(data[i].username)
+        $('.eventUsers').text(data[i].firstname + ' ' + data[i].lastname)
       }
-      }
-    });
+    }
+    }
+  });
 });
 
 });

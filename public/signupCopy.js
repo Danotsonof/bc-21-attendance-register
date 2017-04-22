@@ -1,8 +1,8 @@
 $(document).ready(function(){
 
-  $('form').on('submit', function(){
+  $('form.registration-form').on('submit', function(){
 
-      var user = $( "form" ).serialize();
+      var user = $( 'form.registration-form' ).serialize();
 
       $.ajax({
         type: 'POST',

@@ -1,35 +1,25 @@
 $(document).ready(function(){
 
-  $('form').on('submit', function(){
+  $('form.login-form').on('submit', function(){
 
-      var user = $( "form" ).serialize();
-
+      var user = $( 'form.login-form' ).serialize();
+      //console.log(user);
       $.ajax({
         type: 'POST',
-        url: '/homeCopy',
+        url: '/',
         data: user,
         success: function(data){
           //do something with the data via front-end framework
-          location.reload();
+          //location.reload();
+          if(data.link) {
+    window.location.href = '/adminCopy';
+}
         }
       });
 
       return false;
 
   });
-
-  $('li').on('click', function(){
-      var item = $(this).text().replace(/ /g, "-");
-      $.ajax({
-        type: 'DELETE',
-        url: '/adminCopy/' + item,
-        success: function(data){
-          //do something with the data via front-end framework
-          location.reload();
-        }
-      });
-  });
-
 });
 
 
