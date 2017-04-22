@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 var app = express();
-var port = 3000;
+var port = process .env .PORT || 3000 ;
 
 mongoose.connect('mongodb://register:register@ds155418.mlab.com:55418/attendance');
 
